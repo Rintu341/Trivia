@@ -11,8 +11,7 @@ import javax.inject.Singleton
     interface serve as a bluePrint  for Retrofit to generate the necessary code to interact with
     the Api.
  */
-
-@Singletongit 
+@Singleton
 interface QuestionApi {
     @GET(value = "world.json")
     suspend fun getAllQuestions():Question
