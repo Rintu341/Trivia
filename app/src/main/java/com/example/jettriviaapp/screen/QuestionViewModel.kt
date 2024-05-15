@@ -18,7 +18,7 @@ class QuestionViewModel @Inject constructor(
     private val questionRepository: QuestionRepository
 ) : ViewModel(){
 
-    private val _data : MutableState<DataOrException<ArrayList<QuestionItem>,Boolean,Exception>>
+    val data : MutableState<DataOrException<ArrayList<QuestionItem>,Boolean,Exception>>
                         = mutableStateOf(DataOrException(null,null,Exception("")))
 
 
@@ -26,17 +26,15 @@ class QuestionViewModel @Inject constructor(
         getAllQuestions()
     }
     private fun getAllQuestions(){
-        viewModelScope.launch (
-            Dispatchers.IO
-        ){
-            _data.value.loading = true
-            _data.value = questionRepository.getAllQuestions()
+        viewModelScope.launch {
+            data.value.loading = true
+            data.value = questionRepository.getAllQuestions()
 
-            if(_data.value.toString().isNotEmpty())
+            if(data.value.toString().isNotEmpty())
             {
-                _data.value.loading = false
+                data.value.loading = false
             }else{
-                Log.d("TAG"," Exception ${_data.value.e}")
+                Log.d("TAG"," Exception ${data.value.e}")
             }
         }
     }

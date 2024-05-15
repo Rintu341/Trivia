@@ -69,36 +69,31 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    val room_version = "2.6.1"
     val hilt_version = "2.47"
-    val nav_version = "2.7.7"
-
-    //Hilt-Dagger
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
-
-    //Room
-    implementation ("androidx.room:room-runtime:$room_version")
-    annotationProcessor ("androidx.room:room-compiler:$room_version")
-
-    // To use Kotlin annotation processing tool (kapt) MUST HAVE!
-    kapt("androidx.room:room-compiler:$room_version")
-    implementation ("androidx.room:room-ktx:$room_version")
-
     // Coroutines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
-    // Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.2.0")
-    // Retrofit with Scalar Converter
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    // Coroutine Lifecycle Scopes
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
 
+    //Dagger - Hilt
+    implementation ("com.google.dagger:hilt-android:2.47")
+    //May need okkhttp also
 
-    //Gson Convertor
-    implementation ("com.google.code.gson:gson:2.10.1")
-    // Jetpack Compose Integration
-    implementation ("androidx.navigation:navigation-compose:$nav_version")
+// Dagger - Hilt
+    kapt ("com.google.dagger:hilt-android-compiler:$hilt_version")
+//    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    val hilt = "2.45"
+    implementation ("com.google.dagger:hilt-android:$hilt")
+
+    kapt ("androidx.hilt:hilt-compiler:1.0.0")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    //Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    //GSON converter
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 }
