@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -24,6 +26,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,6 +44,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jettriviaapp.R
@@ -131,6 +136,9 @@ fun QuestionDisPlay(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
+            if(questionIndex.value > 3) {
+                ShowProgress(questionIndex.value + 1)
+            }
             QuestionTracker(questionIndex.value+1,viewModel.getSizeOfData()!!)
             DrawDottedLine(pathEffect = pathEffect)
 
@@ -262,4 +270,61 @@ fun DrawDottedLine(modifier: Modifier = Modifier,pathEffect :PathEffect) {
     }
 
     
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ShowProgress( progress : Int  = 1) {
+
+    val gradiant = Brush.linearGradient(
+        colors = listOf(Color(0xFF0AAD45),
+            Color(0xFF21BDAB)
+        )
+    )
+
+    val progressFactor by remember(progress) {
+        mutableFloatStateOf(progress * 0.005f)
+    }
+
+    Row (
+        modifier = Modifier
+            .padding(top = 6.dp)
+            .height(50.dp)
+            .fillMaxWidth()
+            .border(
+                width = 4.dp,
+                brush = Brush.linearGradient(
+                    colors =
+                    listOf(AppColors.mLightBlue, AppColors.mLightBlue)
+                ),
+                shape = RoundedCornerShape(34.dp)
+            )
+            .clip(
+                shape = RoundedCornerShape(
+                    topStartPercent = 50,
+                    topEndPercent = 50,
+                    bottomEndPercent = 50,
+                    bottomStartPercent = 50
+                )
+            )
+            .background(Color.Transparent),
+        verticalAlignment = Alignment.CenterVertically
+
+    ){
+        Button(
+            contentPadding =  PaddingValues(all = 1.dp),
+            onClick = { },
+            modifier = Modifier
+                .background(color = Color.Green)
+                .fillMaxWidth(progressFactor)
+                ,
+            enabled = false,
+            elevation = null,
+            colors =  ButtonDefaults.buttonColors(containerColor = Color.Transparent,
+                contentColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent),
+            ) {
+            
+        }
+    }
 }
