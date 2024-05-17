@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">JetTriviaApp</string>
+    <string name="BACK">Back</string>
+    <string name="NEXT">Next</string>
 </resources>

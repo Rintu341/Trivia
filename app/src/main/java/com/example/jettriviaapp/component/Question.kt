@@ -4,15 +4,20 @@ import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
@@ -28,6 +33,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,6 +42,7 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.jettriviaapp.R
 import com.example.jettriviaapp.model.QuestionItem
 import com.example.jettriviaapp.screen.QuestionViewModel
 import com.example.jettriviaapp.util.AppColors
@@ -43,14 +50,37 @@ import com.example.jettriviaapp.util.AppColors
 @Composable
 fun Questions(viewModel: QuestionViewModel) {
     val questions = viewModel.data.value.data?.toMutableList()
+
+//    val noOfQuestion
+    val questionIndex = remember{
+        mutableStateOf(0)
+    }
     if(viewModel.data.value.loading == true)
     {
         Log.d("LOADING","QUESTIONS IS LOADING")
+        Column (
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+        CircularProgressIndicator(progress = 0.3f)
+        }
 
     }else{
+
         if(questions != null )
         {
-            QuestionDisPlay( question = questions.first())
+            val question : QuestionItem? = try {
+                questions[questionIndex.value]
+            }catch (e:Exception){
+                null
+            }
+            QuestionDisPlay( question = question!!,questionIndex = questionIndex, viewModel = viewModel,{
+                questionIndex.value += 1
+            })
+            {
+                questionIndex.value -= 1
+            }
         }
 
     }
@@ -61,9 +91,10 @@ fun Questions(viewModel: QuestionViewModel) {
 @Composable
 fun QuestionDisPlay(
     question: QuestionItem,
-//    questionIndex : MutableState<Int>,
-//    viewModel: QuestionViewModel,
-    onNextClicked:(Int) -> Unit = {}
+    questionIndex : MutableState<Int>,
+    viewModel: QuestionViewModel,
+    onNextClicked:(Int) -> Unit = {},
+    onBackClicked:(Int)-> Unit = {}
     ) {
 
     //store list of answer
@@ -87,6 +118,7 @@ fun QuestionDisPlay(
         }
     }
 
+
     val pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(10f,10f),5f)
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -99,7 +131,7 @@ fun QuestionDisPlay(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            QuestionTracker()
+            QuestionTracker(questionIndex.value+1,viewModel.getSizeOfData()!!)
             DrawDottedLine(pathEffect = pathEffect)
 
             Text(text = question.question,
@@ -119,6 +151,9 @@ fun QuestionDisPlay(
                         .padding(6.dp)
                         .fillMaxWidth()
                         .height(45.dp)
+                        .clickable {
+                            updateAnswer(index)
+                        }
                         .border(
                             width = 4.dp, brush = Brush.linearGradient(
                                 colors = listOf(
@@ -135,7 +170,7 @@ fun QuestionDisPlay(
                 {
                         RadioButton(selected = (answerState.value == index) ,
                             onClick = {
-                                updateAnswer(index)
+                                    updateAnswer(index)
                             },
                             modifier = Modifier.padding(start = 16.dp),
                             colors = RadioButtonDefaults.colors(
@@ -145,14 +180,51 @@ fun QuestionDisPlay(
                                     Color.Red.copy(0.2f)
                                 })
                             )) // End radio
-
-                    Text(text = answerText)
-                }
+                    val annotatedString = buildAnnotatedString {
+                        withStyle(
+                            SpanStyle( color = (
+                                    if(correctAnswerState.value == true && index == answerState.value){
+                                        Color.Green
+                                    }else if(correctAnswerState.value == false && index == answerState.value){
+                                        Color.Red
+                                    }else{
+                                        Color.White
+                                    }
+                                    ))){
+                            append(answerText)
+                        }// Annotated Text End
+                    }
+                    Text(annotatedString,
+                        modifier = Modifier.padding(6.dp),
+                        fontSize =  17.sp)
+                }//End Row
             }
+            Spacer(modifier = Modifier.height(32.dp))
+
+            //Next Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                if(questionIndex.value != 0) {
+                    ButtonUi(onBackClicked, questionIndex,R.string.BACK)
+                }else{
+                    OutLinedButtonUi(R.string.BACK)
+                }
+                if(questionIndex.value < viewModel.getSizeOfData()!!) {
+                    ButtonUi(onBackClicked = onNextClicked, questionIndex = questionIndex, string = R.string.NEXT )
+                }else{
+                    OutLinedButtonUi(string = R.string.NEXT)
+                }
+            } // Row End
 
         }
     }
 }
+
+
+
 
 //@Preview(showBackground = true)
 @Composable

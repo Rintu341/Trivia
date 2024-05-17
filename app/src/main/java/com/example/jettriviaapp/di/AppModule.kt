@@ -1,4 +1,4 @@
-package com.example.jettriviaapp.module
+package com.example.jettriviaapp.di
 
 import com.example.jettriviaapp.network.QuestionApi
 import com.example.jettriviaapp.repository.QuestionRepository

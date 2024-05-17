@@ -38,4 +38,8 @@ class QuestionViewModel @Inject constructor(
             }
         }
     }
+    fun getSizeOfData():Int?
+    {
+        return data.value.data?.size
+    }
 }
