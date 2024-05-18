@@ -15,11 +15,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
@@ -37,7 +38,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -68,7 +69,14 @@ fun Questions(viewModel: QuestionViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-        CircularProgressIndicator(progress = 0.3f)
+            ProgressIndicatorDefaults.ProgressAnimationSpec.visibilityThreshold?.let {
+                CircularProgressIndicator(
+                    progress = it,
+                    trackColor = Color.Transparent,
+                    modifier = Modifier.size(50.dp),
+                    color =  Color.Green
+                )
+            }
         }
 
     }else{
@@ -136,9 +144,11 @@ fun QuestionDisPlay(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            if(questionIndex.value > 3) {
-                ShowProgress(questionIndex.value + 1)
-            }
+//            if(questionIndex.value > 3) {
+//                ShowProgress(questionIndex.value + 1)
+//            }
+//            CircularProgressBar((questionIndex.value + 1).toFloat(),viewModel.getSizeOfData()!!)
+            LinearProgressBar((questionIndex.value + 1).toFloat(),viewModel.getSizeOfData()!!)
             QuestionTracker(questionIndex.value+1,viewModel.getSizeOfData()!!)
             DrawDottedLine(pathEffect = pathEffect)
 
@@ -240,7 +250,7 @@ private fun QuestionTracker(counter:Int = 10,
                             outOf:Int = 100) {
 
     Text(text = buildAnnotatedString {
-                withStyle(style = ParagraphStyle(textIndent = TextIndent.None,)
+                withStyle(style = ParagraphStyle(textIndent = TextIndent.None)
                 ){
                         withStyle(style = SpanStyle(color = AppColors.mOffWhite,
                             fontSize = 27.sp,
@@ -258,7 +268,7 @@ private fun QuestionTracker(counter:Int = 10,
 }
 
 @Composable
-fun DrawDottedLine(modifier: Modifier = Modifier,pathEffect :PathEffect) {
+fun DrawDottedLine(pathEffect :PathEffect) {
     Canvas(modifier = Modifier
         .fillMaxWidth()
         .height(2.dp) ) {
@@ -276,11 +286,11 @@ fun DrawDottedLine(modifier: Modifier = Modifier,pathEffect :PathEffect) {
 @Composable
 private fun ShowProgress( progress : Int  = 1) {
 
-    val gradiant = Brush.linearGradient(
-        colors = listOf(Color(0xFF0AAD45),
-            Color(0xFF21BDAB)
-        )
-    )
+//    val gradiant = Brush.linearGradient(
+//        colors = listOf(Color(0xFF0AAD45),
+//            Color(0xFF21BDAB)
+//        )
+//    )
 
     val progressFactor by remember(progress) {
         mutableFloatStateOf(progress * 0.005f)
